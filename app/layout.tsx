@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
-      <body className="min-h-full flex flex-col bg-white text-neutral-900">
+      <body className="min-h-full flex flex-col">
         <Header />
 
-        <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10">
+        <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-5">
           {children}
         </main>
 

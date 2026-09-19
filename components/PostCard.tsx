@@ -7,19 +7,21 @@ export default function PostCard({ post }: { post: PostSummary }) {
   return (
     <Link
       href={`/posts/${post.id}`}
-      className="block rounded-xl border border-neutral-200 p-5 hover:border-neutral-400"
+      className="block rounded-2xl bg-card p-5 shadow-[0_1px_3px_rgba(30,27,51,0.06)] transition hover:shadow-[0_6px_20px_rgba(108,92,231,0.12)]"
     >
       <div className="flex items-center gap-2">
         <PostBadge isPremium={post.isPremium} />
-        <span className="text-xs text-neutral-500">{post.createdAt}</span>
+        <span className="text-xs text-muted">{post.createdAt}</span>
       </div>
 
-      <h2 className="mt-3 text-lg font-semibold">{post.title}</h2>
+      <h2 className="mt-3 text-lg font-bold leading-snug">{post.title}</h2>
 
-      {/* 요약은 줄바꿈이 있어서 whitespace-pre-line으로 그대로 보여준다 */}
-      <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-neutral-600">
-        {post.summary}
-      </p>
+      {/* 요약의 줄바꿈은 지키지 않는다. 화면 폭에 맞춰 자연스럽게 흐르게 둔다. */}
+      <p className="mt-2 text-sm leading-relaxed text-muted">{post.summary}</p>
+
+      <span className="mt-4 inline-block text-sm font-semibold text-accent">
+        읽어보기 →
+      </span>
     </Link>
   );
 }

@@ -2,14 +2,14 @@
 export default function PostBadge({ isPremium }: { isPremium: boolean }) {
   if (isPremium) {
     return (
-      <span className="rounded bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">
+      <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-bold tracking-wide text-accent">
         🔒 PREMIUM
       </span>
     );
   }
 
   return (
-    <span className="rounded bg-neutral-100 px-2 py-0.5 text-xs font-semibold text-neutral-600">
+    <span className="rounded-full bg-background px-2.5 py-1 text-[11px] font-bold tracking-wide text-muted">
       무료
     </span>
   );

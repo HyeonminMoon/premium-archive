@@ -10,21 +10,28 @@ export default function MembershipPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">멤버십</h1>
-      <p className="mt-2 text-neutral-600">
-        프리미엄 글을 전부 읽을 수 있는 월 구독입니다.
-      </p>
+      <div className="rounded-2xl bg-card p-6 shadow-[0_1px_3px_rgba(30,27,51,0.06)] sm:p-8">
+        <span className="text-xs font-bold tracking-wide text-accent">
+          멤버십
+        </span>
+        <h1 className="mt-2 text-2xl font-bold">
+          프리미엄 글을 전부 읽으세요
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-muted">
+          언제든 해지할 수 있는 월 구독입니다.
+        </p>
 
-      <div className="mt-8 rounded-xl border border-neutral-200 p-6">
-        <div className="flex items-baseline gap-1">
-          <span className="text-3xl font-bold">9,900원</span>
-          <span className="text-neutral-500">/ 월</span>
+        <div className="mt-6 flex items-baseline gap-1 border-t border-line pt-6">
+          <span className="text-4xl font-bold">9,900원</span>
+          <span className="text-muted">/ 월</span>
         </div>
 
-        <ul className="mt-6 space-y-2 text-neutral-800">
+        <ul className="mt-6 space-y-3">
           {benefits.map((benefit) => (
-            <li key={benefit} className="flex gap-2">
-              <span className="text-neutral-400">✓</span>
+            <li key={benefit} className="flex items-center gap-3 text-sm">
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-accent-soft text-xs font-bold text-accent">
+                ✓
+              </span>
               {benefit}
             </li>
           ))}
@@ -34,7 +41,7 @@ export default function MembershipPage() {
         <button
           type="button"
           disabled
-          className="mt-8 w-full rounded-full bg-neutral-900 px-5 py-3 font-medium text-white disabled:bg-neutral-300"
+          className="mt-8 w-full rounded-full bg-accent px-5 py-3.5 font-semibold text-white shadow-sm transition hover:opacity-90 disabled:bg-line disabled:text-muted disabled:shadow-none"
         >
           결제하기 (준비 중)
         </button>
