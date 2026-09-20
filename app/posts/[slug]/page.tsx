@@ -2,17 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PostBadge from "@/components/PostBadge";
 import BackToListLink from "@/components/BackToListLink";
-import { getPostForReader } from "@/data/mock-posts";
+import { getPostForReader } from "@/data/posts";
 
 // 2. 글 상세 - 글을 읽는다 / 멤버십의 필요성을 느낀다.
-export default async function PostDetailPage({ params }: PageProps<"/posts/[id]">) {
-  const { id } = await params;
+export default async function PostDetailPage({ params }: PageProps<"/posts/[slug]">) {
+  const { slug } = await params;
 
-  // 아직 로그인 기능이 없어서 모두 비회원으로 본다.
-  // 로그인이 생기면 이 값을 서버에서 확인한 멤버십 여부로 바꾼다.
-  const hasMembership = false;
-
-  const post = getPostForReader(Number(id), hasMembership);
+  // 멤버십 여부를 여기서 판단하지 않는다.
+  // 로그인 쿠키를 실어 보내고, 본문을 보내줄지 말지는 데이터베이스가 정한다.
+  const post = await getPostForReader(slug);
   if (!post) notFound();
 
   return (
@@ -20,7 +18,7 @@ export default async function PostDetailPage({ params }: PageProps<"/posts/[id]"
       <div className="rounded-2xl bg-card p-6 shadow-[0_1px_3px_rgba(30,27,51,0.06)] sm:p-8">
         <div className="flex items-center gap-2">
           <PostBadge isPremium={post.isPremium} />
-          <span className="text-xs text-muted">{post.createdAt}</span>
+          <span className="text-xs text-muted">{post.publishedAt}</span>
         </div>
 
         <h1 className="mt-3 text-2xl font-bold leading-snug">{post.title}</h1>

@@ -1,10 +1,10 @@
 import PostCard from "@/components/PostCard";
-import { getPostsForList } from "@/data/mock-posts";
+import { getPostsForList } from "@/data/posts";
 
 // 1. 홈 - 읽을 글을 고른다.
-export default function HomePage() {
-  // 본문은 담기지 않은 목록용 데이터. 최신순으로 이미 정렬되어 있다.
-  const posts = getPostsForList();
+export default async function HomePage() {
+  // 본문이 없는 posts 표에서만 읽는다. 최신순 정렬은 데이터베이스가 한다.
+  const posts = await getPostsForList();
 
   return (
     <div>
@@ -26,7 +26,7 @@ export default function HomePage() {
 
       <ul className="mt-3 space-y-3">
         {posts.map((post) => (
-          <li key={post.id}>
+          <li key={post.slug}>
             <PostCard post={post} />
           </li>
         ))}
