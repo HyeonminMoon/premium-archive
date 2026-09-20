@@ -33,7 +33,7 @@ export default async function PostDetailPage({ params }: PageProps<"/posts/[slug
         {post.locked && (
           <div className="mt-8 rounded-2xl bg-accent-soft p-6 text-center">
             <p className="text-base font-bold text-accent">
-              이 글은 멤버십 회원 전용입니다
+              멤버십 회원 전용 콘텐츠입니다
             </p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
               멤버십에 가입하면 이 글의 전문과 모든 프리미엄 글을 읽을 수 있습니다.
