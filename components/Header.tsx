@@ -46,6 +46,12 @@ export default async function Header() {
 
           {user ? (
             <>
+              <Link
+                href="/library"
+                className="text-sm font-semibold text-muted transition hover:text-foreground"
+              >
+                내 서재
+              </Link>
               <span className="text-sm font-semibold">{profile?.nickname}</span>
               <form action={logOut}>
                 <button
