@@ -336,3 +336,54 @@ from new_post;
 ---
 
 **요약 3줄** — 테이블 3개(`posts`, `post_bodies`, `memberships`)로 PRD 다섯 화면이 전부 돌아갑니다. 보안의 전부는 본문을 별도 테이블로 떼어내 RLS를 건 것과, `memberships`에 쓰기 정책을 하나도 만들지 않은 것 두 가지입니다. 만료일·결제 테이블·프로필 테이블은 지금 쓰지 않으므로 넣지 않았고, 필요해지는 날 각각 컬럼 하나 또는 테이블 하나로 추가됩니다.
+
+---
+
+## 8. 추가: `payments` — 결제 기록
+
+> 앞의 4-5에서는 "결제 기록은 `payment_ref` 컬럼 하나로 충분하다"고 적었습니다.
+> 이후 "언제 누가 얼마를 결제했는지 남겨 달라"는 요청이 들어와 별도 표를 만들었습니다.
+> 승인된 결제만 한 줄씩 쌓입니다.
+
+| 컬럼명 | 타입 | 필수 | 설명 |
+|---|---|---|---|
+| `id` | `uuid` | 필수 (PK) | 기록 한 줄의 고유 번호. |
+| `user_id` | `uuid` | 필수 (`auth.users.id` 참조) | **누가** 결제했는지. |
+| `order_id` | `text` | 필수 (유니크) | 결제할 때 만든 주문번호. 유니크라서 같은 결제가 두 줄로 쌓이지 않는다. |
+| `payment_key` | `text` | 필수 | 토스가 준 결제 식별자. 개발자센터에서 이 값으로 원본을 찾는다. |
+| `amount` | `integer` | 필수 | **얼마를** 결제했는지. 토스가 승인한 금액을 그대로 넣는다. |
+| `method` | `text` | 선택 | 결제수단(예: `카드`). |
+| `status` | `text` | 필수 | 토스가 알려준 상태(예: `DONE`). |
+| `approved_at` | `timestamptz` | 필수 | **언제** 승인됐는지. 토스가 준 승인 시각. |
+
+**보안**: 자기 기록만 읽을 수 있고, 쓰기 정책은 하나도 만들지 않습니다.
+그래서 결제 승인을 확인한 서버 코드(비밀 키)만 기록을 남길 수 있습니다.
+
+```sql
+-- ---------- 4. 결제 기록 ----------
+create table public.payments (
+  id          uuid        primary key default gen_random_uuid(),
+  user_id     uuid        not null references auth.users(id) on delete cascade,
+  order_id    text        not null unique,
+  payment_key text        not null,
+  amount      integer     not null,
+  method      text,
+  status      text        not null,
+  approved_at timestamptz not null,
+  created_at  timestamptz not null default now()
+);
+
+-- "이 회원의 결제 내역을 최근 순으로" 조회를 위한 인덱스.
+create index payments_user_idx on public.payments (user_id, approved_at desc);
+
+alter table public.payments enable row level security;
+
+create policy "내 결제 기록만 내가 읽는다"
+  on public.payments
+  for select
+  to authenticated
+  using (user_id = auth.uid());
+
+-- 주의: insert/update/delete 정책을 만들지 않는 것이 방어다.
+-- 결제 승인을 확인한 서버 코드가 비밀 키로만 기록을 남긴다.
+```

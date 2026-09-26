@@ -1,7 +1,28 @@
+import Link from "next/link";
 import BackToListLink from "@/components/BackToListLink";
+import { createClient } from "@/lib/supabase/server";
+import PaymentWidget from "./PaymentWidget";
 
 // 4. 멤버십 안내 - 결제를 결심한다.
-export default function MembershipPage() {
+export default async function MembershipPage({
+  searchParams,
+}: PageProps<"/membership">) {
+  // 결제가 실패하면 토스가 이 화면으로 되돌려 보내면서 사유를 주소에 붙여 준다.
+  const { message } = await searchParams;
+
+  const supabase = await createClient();
+
+  // 로그인 여부와 멤버십 여부를 서버에서 확인한다.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data: profile } = user
+    ? await supabase.from("profiles").select("is_member").eq("id", user.id).single()
+    : { data: null };
+
+  const isMember = profile?.is_member ?? false;
+
   const benefits = [
     "프리미엄 글 전문 열람",
     "새 글이 올라오면 바로 읽기",
@@ -18,7 +39,7 @@ export default function MembershipPage() {
           프리미엄 글을 전부 읽으세요
         </h1>
         <p className="mt-2 text-sm leading-relaxed text-muted">
-          언제든 해지할 수 있는 월 구독입니다.
+          한 번 결제하면 프리미엄 글이 모두 열립니다.
         </p>
 
         <div className="mt-6 flex items-baseline gap-1 border-t border-line pt-6">
@@ -37,14 +58,39 @@ export default function MembershipPage() {
           ))}
         </ul>
 
-        {/* 결제 연동은 아직 붙이지 않았다. 버튼 자리만 만들어 둔 상태다. */}
-        <button
-          type="button"
-          disabled
-          className="mt-8 w-full rounded-full bg-accent px-5 py-3.5 font-semibold text-white shadow-sm transition hover:opacity-90 disabled:bg-line disabled:text-muted disabled:shadow-none"
-        >
-          결제하기 (준비 중)
-        </button>
+        {message && (
+          <p className="mt-6 rounded-xl bg-accent-soft px-4 py-3 text-sm text-accent">
+            결제가 완료되지 않았습니다: {message}
+          </p>
+        )}
+
+        {/* 세 갈래다. 이미 회원 / 비로그인 / 결제할 수 있는 회원.
+            결제창을 띄울 수 있는 건 마지막 경우뿐이다. */}
+        {isMember ? (
+          <div className="mt-8 rounded-xl border border-line px-4 py-4 text-center">
+            <p className="text-sm font-bold">이미 이용 중입니다</p>
+            <Link
+              href="/library"
+              className="mt-3 inline-block text-sm font-semibold text-accent"
+            >
+              내 서재로 가기
+            </Link>
+          </div>
+        ) : user ? (
+          <PaymentWidget customerKey={user.id} customerEmail={user.email ?? ""} />
+        ) : (
+          <div className="mt-8 border-t border-line pt-6 text-center">
+            <p className="text-sm text-muted">
+              결제하려면 먼저 로그인해야 합니다.
+            </p>
+            <Link
+              href="/login"
+              className="mt-4 inline-block w-full rounded-full bg-accent px-5 py-3.5 font-semibold text-white shadow-sm transition hover:opacity-90"
+            >
+              로그인하고 시작하기
+            </Link>
+          </div>
+        )}
       </div>
 
       <BackToListLink />
