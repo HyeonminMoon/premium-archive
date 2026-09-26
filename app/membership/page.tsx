@@ -10,6 +10,15 @@ export default async function MembershipPage({
   // 결제가 실패하면 토스가 이 화면으로 되돌려 보내면서 사유를 주소에 붙여 준다.
   const { message } = await searchParams;
 
+  // 토스 클라이언트 키는 서버에서 읽어서 결제 위젯에 넘긴다.
+  const tossClientKey = process.env.TOSS_CLIENT_KEY;
+  if (!tossClientKey) {
+    throw new Error(
+      "TOSS_CLIENT_KEY 가 없습니다. 내 컴퓨터에서는 .env.local 에, " +
+        "Vercel 배포에서는 Project Settings > Environment Variables 에 값을 넣으세요.",
+    );
+  }
+
   const supabase = await createClient();
 
   // 로그인 여부와 멤버십 여부를 서버에서 확인한다.
@@ -77,7 +86,11 @@ export default async function MembershipPage({
             </Link>
           </div>
         ) : user ? (
-          <PaymentWidget customerKey={user.id} customerEmail={user.email ?? ""} />
+          <PaymentWidget
+            clientKey={tossClientKey}
+            customerKey={user.id}
+            customerEmail={user.email ?? ""}
+          />
         ) : (
           <div className="mt-8 border-t border-line pt-6 text-center">
             <p className="text-sm text-muted">

@@ -16,9 +16,14 @@ import {
 const MONTHLY_PRICE = 9900;
 
 export default function PaymentWidget({
+  clientKey,
   customerKey,
   customerEmail,
 }: {
+  // 토스 클라이언트 키. 서버 페이지가 읽어서 넘겨준다.
+  // 공개돼도 되는 값이지만, 환경 변수 이름에 NEXT_PUBLIC_ 을 붙이지 않으려고
+  // 브라우저가 직접 읽지 않고 이렇게 받는다.
+  clientKey: string;
   customerKey: string;
   customerEmail: string;
 }) {
@@ -34,13 +39,6 @@ export default function PaymentWidget({
     startedRef.current = true;
 
     async function attachWidget() {
-      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
-      if (!clientKey) {
-        throw new Error(
-          ".env.local 에 NEXT_PUBLIC_TOSS_CLIENT_KEY 가 없습니다. 값을 채운 뒤 개발 서버를 껐다 켜세요.",
-        );
-      }
-
       const tossPayments = await loadTossPayments(clientKey);
 
       // customerKey: 이 고객이 누구인지 구분하는 값. 회원 id(UUID)를 쓴다.
@@ -62,7 +60,7 @@ export default function PaymentWidget({
     attachWidget().catch((e: unknown) => {
       setError(e instanceof Error ? e.message : "결제창을 불러오지 못했습니다.");
     });
-  }, [customerKey]);
+  }, [clientKey, customerKey]);
 
   async function startPayment() {
     const widgets = widgetsRef.current;
