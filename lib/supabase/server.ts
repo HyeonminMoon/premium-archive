@@ -9,12 +9,12 @@ import { cookies } from "next/headers";
 // 비회원에게도 프리미엄 본문이 그대로 나가 버린다.
 // 공개 키 + 로그인 쿠키로 읽어야 데이터베이스가 "이 사람이 볼 수 있는 줄"만 골라 준다.
 export async function createClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const url = process.env.SUPABASE_URL;
+  const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !publishableKey) {
     throw new Error(
-      "NEXT_PUBLIC_SUPABASE_URL 과 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 가 없습니다. " +
+      "SUPABASE_URL 과 SUPABASE_PUBLISHABLE_KEY 가 없습니다. " +
         "내 컴퓨터에서는 .env.local 에 값을 채운 뒤 개발 서버를 껐다 켜고, " +
         "Vercel 배포에서는 Project Settings > Environment Variables 에 같은 값을 넣으세요.",
     );
@@ -52,7 +52,7 @@ export async function createClient() {
 // 이 함수를 "use client" 가 붙은 파일에서 부르면 비밀 키가 브라우저로 새어 나간다.
 // 서버 컴포넌트나 서버 액션에서만 쓴다.
 export function createAdminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = process.env.SUPABASE_URL;
   const secretKey = process.env.SUPABASE_SECRET_KEY;
 
   if (!url || !secretKey) {
