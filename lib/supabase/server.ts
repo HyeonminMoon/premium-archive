@@ -14,8 +14,9 @@ export async function createClient() {
 
   if (!url || !publishableKey) {
     throw new Error(
-      ".env.local 에 NEXT_PUBLIC_SUPABASE_URL 과 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 가 필요합니다. " +
-        "값을 채운 뒤 개발 서버를 껐다 켜세요.",
+      "NEXT_PUBLIC_SUPABASE_URL 과 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY 가 없습니다. " +
+        "내 컴퓨터에서는 .env.local 에 값을 채운 뒤 개발 서버를 껐다 켜고, " +
+        "Vercel 배포에서는 Project Settings > Environment Variables 에 같은 값을 넣으세요.",
     );
   }
 
@@ -56,7 +57,8 @@ export function createAdminClient() {
 
   if (!url || !secretKey) {
     throw new Error(
-      ".env.local 에 SUPABASE_SECRET_KEY 가 필요합니다. 값을 채운 뒤 개발 서버를 껐다 켜세요.",
+      "SUPABASE_SECRET_KEY 가 없습니다. 내 컴퓨터에서는 .env.local 에, " +
+        "Vercel 배포에서는 Project Settings > Environment Variables 에 값을 넣으세요.",
     );
   }
 
