@@ -15,6 +15,18 @@ import {
 // 월 구독료. 서버(success 페이지)에도 같은 값이 있고, 승인 전에 두 값을 대조한다.
 const MONTHLY_PRICE = 9900;
 
+// 구글 애널리틱스가 켜져 있으면 브라우저에 window.gtag 라는 함수가 생긴다.
+// 타입스크립트에게 "그런 함수가 있을 수도 있다"고 알려 준다.
+declare global {
+  interface Window {
+    gtag?: (
+      command: "event",
+      eventName: string,
+      params?: Record<string, unknown>,
+    ) => void;
+  }
+}
+
 export default function PaymentWidget({
   clientKey,
   customerKey,
@@ -67,6 +79,19 @@ export default function PaymentWidget({
     if (!widgets) return;
 
     setError("");
+
+    // 구글 애널리틱스에 버튼 클릭을 기록한다.
+    // 로컬 개발 중에는 window.gtag 가 아예 없으므로 ?. 로 그냥 건너뛴다.
+    // 기록이 실패해도 결제는 계속 진행되어야 하므로 try 바깥에 두지 않는다.
+    window.gtag?.("event", "membership_start_click", {
+      // 어느 페이지에서 눌렀는지
+      page_path: window.location.pathname,
+      page_location: window.location.href,
+      // 무엇을 누른 건지
+      button_name: "멤버십 시작하기",
+      value: MONTHLY_PRICE,
+      currency: "KRW",
+    });
 
     try {
       // 결제창이 뜬다. 인증을 마치면 토스가 successUrl 로 되돌려 보내면서
