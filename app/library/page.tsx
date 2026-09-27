@@ -1,8 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 // 5. 내 서재 - 내 멤버십 상태를 확인한다.
+export const metadata: Metadata = {
+  title: "내 서재",
+  description: "내 멤버십 상태와 읽을 수 있는 글을 봅니다.",
+  robots: { index: false, follow: false },
+};
+
 export default async function LibraryPage() {
   const supabase = await createClient();
 

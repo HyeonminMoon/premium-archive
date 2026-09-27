@@ -1,9 +1,22 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import BackToListLink from "@/components/BackToListLink";
 import { createClient } from "@/lib/supabase/server";
 import PaymentWidget from "./PaymentWidget";
 
 // 4. 멤버십 안내 - 결제를 결심한다.
+export const metadata: Metadata = {
+  title: "멤버십",
+  description:
+    "월 9,900원으로 프리미엄 글 전체를 읽습니다. 언제든 해지할 수 있습니다.",
+  openGraph: {
+    title: "멤버십 · 프리미엄 아카이브",
+    description:
+      "월 9,900원으로 프리미엄 글 전체를 읽습니다. 언제든 해지할 수 있습니다.",
+    url: "/membership",
+  },
+};
+
 export default async function MembershipPage({
   searchParams,
 }: PageProps<"/membership">) {

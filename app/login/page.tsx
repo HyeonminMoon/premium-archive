@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -23,6 +24,12 @@ async function logIn(formData: FormData) {
 
   redirect("/");
 }
+
+export const metadata: Metadata = {
+  title: "로그인",
+  description: "프리미엄 아카이브에 로그인합니다.",
+  robots: { index: false, follow: false },
+};
 
 export default async function LogInPage({ searchParams }: PageProps<"/login">) {
   const { error } = await searchParams;

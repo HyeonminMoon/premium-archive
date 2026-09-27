@@ -1,7 +1,26 @@
+import type { Metadata } from "next";
 import PostCard from "@/components/PostCard";
 import { getPostsForList } from "@/data/posts";
 
 // 1. 홈 - 읽을 글을 고른다.
+export const metadata: Metadata = {
+  title: { absolute: "프리미엄 아카이브 — AI 시대의 일하는 법" },
+  description:
+    "AI 시대의 일하는 법을 다루는 글 모음. 무료 글은 누구나 읽을 수 있고, 프리미엄 글은 멤버십 회원에게 열립니다.",
+  openGraph: {
+    title: "프리미엄 아카이브 — AI 시대의 일하는 법",
+    description:
+      "AI 시대의 일하는 법을 다루는 글 모음. 무료 글은 누구나 읽을 수 있고, 프리미엄 글은 멤버십 회원에게 열립니다.",
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "프리미엄 아카이브 — AI 시대의 일하는 법",
+    description:
+      "AI 시대의 일하는 법을 다루는 글 모음. 무료 글은 누구나 읽을 수 있고, 프리미엄 글은 멤버십 회원에게 열립니다.",
+  },
+};
+
 export default async function HomePage() {
   // 본문이 없는 posts 표에서만 읽는다. 최신순 정렬은 데이터베이스가 한다.
   const posts = await getPostsForList();

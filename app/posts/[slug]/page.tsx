@@ -1,8 +1,44 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import PostBadge from "@/components/PostBadge";
 import BackToListLink from "@/components/BackToListLink";
 import { getPostForReader } from "@/data/posts";
+
+// 글마다 제목과 설명이 달라지므로, 고정값 대신 함수로 만든다.
+// Next.js 가 화면을 그리기 전에 이 함수를 먼저 불러서 <head> 를 채운다.
+export async function generateMetadata({
+  params,
+}: PageProps<"/posts/[slug]">): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostForReader(slug);
+
+  if (!post) return { title: "글을 찾을 수 없습니다" };
+
+  const url = `/posts/${slug}`;
+
+  // 요약문에 들어 있는 줄바꿈을 공백 한 칸으로 바꾼다.
+  // 메타태그는 한 줄이어야 검색 결과에 깔끔하게 나온다.
+  const description = post.summary.replace(/\s+/g, " ").trim();
+
+  return {
+    title: post.title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description,
+      url,
+      publishedTime: post.publishedAt,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description,
+    },
+  };
+}
 
 // 2. 글 상세 - 글을 읽는다 / 멤버십의 필요성을 느낀다.
 export default async function PostDetailPage({ params }: PageProps<"/posts/[slug]">) {

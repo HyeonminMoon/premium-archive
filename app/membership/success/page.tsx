@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient, createAdminClient } from "@/lib/supabase/server";
@@ -12,6 +13,12 @@ import { createClient, createAdminClient } from "@/lib/supabase/server";
 
 // 월 구독료. 승인 요청 전에 주문 금액이 이 값과 같은지 반드시 대조한다.
 const MONTHLY_PRICE = 9900;
+
+export const metadata: Metadata = {
+  title: "결제 확인",
+  description: "멤버십 결제 결과를 확인합니다.",
+  robots: { index: false, follow: false },
+};
 
 export default async function PaymentSuccessPage({
   searchParams,
