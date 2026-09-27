@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { siteUrl, siteName } from "@/lib/site";
@@ -34,6 +35,17 @@ export const metadata: Metadata = {
   },
 };
 
+// 구글 애널리틱스 측정 ID.
+//
+// 실제 배포된 사이트에서만 켠다. 내 컴퓨터에서 개발하는 동안이나
+// 미리보기 배포에서 돌아다닌 기록이 방문자 통계에 섞이면 안 되기 때문이다.
+// VERCEL_ENV 는 Vercel 이 자동으로 채워 준다 ("production" / "preview" / "development").
+// 내 컴퓨터에는 이 값이 아예 없으므로 추적이 저절로 꺼진다.
+const gaId =
+  process.env.VERCEL_ENV === "production"
+    ? process.env.GA_MEASUREMENT_ID
+    : undefined;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
@@ -45,6 +57,27 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
 
         <Footer />
+
+        {/* 구글 애널리틱스. gaId 가 없으면 아무것도 넣지 않는다. */}
+        {gaId && (
+          <>
+            {/* 구글이 주는 측정 스크립트를 받아 온다.
+                afterInteractive = 화면이 다 그려진 뒤에 받는다. 첫 화면이 느려지지 않는다. */}
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            {/* 받아 온 스크립트를 우리 측정 ID로 켠다. */}
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );
