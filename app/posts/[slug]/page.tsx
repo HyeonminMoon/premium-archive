@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PostBadge from "@/components/PostBadge";
 import BackToListLink from "@/components/BackToListLink";
-import { getPostForReader } from "@/data/posts";
+import { getPostForReader, countView } from "@/data/posts";
 
 // 글마다 제목과 설명이 달라지므로, 고정값 대신 함수로 만든다.
 // Next.js 가 화면을 그리기 전에 이 함수를 먼저 불러서 <head> 를 채운다.
@@ -48,6 +48,10 @@ export default async function PostDetailPage({ params }: PageProps<"/posts/[slug
   // 로그인 쿠키를 실어 보내고, 본문을 보내줄지 말지는 데이터베이스가 정한다.
   const post = await getPostForReader(slug);
   if (!post) notFound();
+
+  // 조회수를 1 올린다.
+  // 실패해도 글은 정상으로 보여야 하므로 에러를 무시한다.
+  await countView(slug);
 
   return (
     <article>

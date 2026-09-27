@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
       // 회원 전용이거나 개인 정보가 걸린 화면. 검색 결과에 나오면 안 된다.
-      disallow: ["/library", "/membership/success", "/login", "/signup"],
+      disallow: ["/admin", "/library", "/membership/success", "/login", "/signup"],
     },
     sitemap: `${siteUrl}/sitemap.xml`,
   };

@@ -82,3 +82,45 @@ export async function getPostForReader(
     locked: !bodyRow,
   };
 }
+
+/** 글 조회수를 1 올린다. 글 상세 화면이 열릴 때마다 부른다. */
+export async function countView(slug: string): Promise<void> {
+  const supabase = await createClient();
+
+  // 화면 코드가 posts 표를 직접 고치지는 못한다.
+  // 데이터베이스에 만들어 둔 함수만 부를 수 있고, 그 함수는 1 올리는 일만 한다.
+  // 그래서 숫자를 마음대로 바꿔치기할 수 없다.
+  const { error } = await supabase.rpc("increment_view_count", {
+    post_slug: slug,
+  });
+
+  // 조회수 기록이 실패했다고 글을 못 보여줄 이유는 없다. 기록만 남기고 넘어간다.
+  if (error) console.error("조회수 기록 실패:", slug, error.message);
+}
+
+/** 관리자 통계에 쓸 조회수 상위 글. */
+export type TopPost = {
+  slug: string;
+  title: string;
+  isPremium: boolean;
+  viewCount: number;
+};
+
+export async function getTopPostsByViews(limit = 10): Promise<TopPost[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("posts")
+    .select("slug, title, is_premium, view_count")
+    .order("view_count", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+
+  return (data ?? []).map((row) => ({
+    slug: row.slug,
+    title: row.title,
+    isPremium: row.is_premium,
+    viewCount: row.view_count ?? 0,
+  }));
+}
