@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { sendWelcomeEmail } from "@/lib/email";
 
 // 3. 회원가입 - 회원이 된다.
 //
@@ -28,6 +29,16 @@ async function signUp(formData: FormData) {
 
   if (error) {
     redirect("/signup?error=" + encodeURIComponent(error.message));
+  }
+
+  // 가입이 끝났으니 환영 메일을 보낸다.
+  // 이 코드는 "use server" 안이라 서버에서만 돈다. 메일 키가 브라우저로 가지 않는다.
+  //
+  // 메일이 실패해도 가입은 이미 끝났다. 그래서 결과를 확인만 하고 넘어간다.
+  // 여기서 redirect 를 막거나 에러를 띄우면, 가입은 됐는데 실패한 것처럼 보인다.
+  const mail = await sendWelcomeEmail(email, nickname);
+  if (!mail.ok) {
+    console.error("환영 메일 발송 실패:", email, mail.reason);
   }
 
   // 이메일 확인 설정이 켜져 있으면 가입 직후에는 로그인 상태가 아니다.
