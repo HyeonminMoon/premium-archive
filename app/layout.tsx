@@ -46,10 +46,24 @@ const gaId =
     ? process.env.GA_MEASUREMENT_ID
     : undefined;
 
+// 구글 애드센스 게시자 ID. 공개되는 값이라 코드에 그대로 적어도 된다.
+const ADSENSE_CLIENT = "ca-pub-5203069951708478";
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ko" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        {/* 구글 애드센스. 사이트 소유권 확인에 쓰이므로 모든 화면의 head 에 들어가야 한다.
+            next/script 대신 평범한 script 태그를 쓴다.
+            next/script 의 beforeInteractive 는 head 에 preload 링크만 넣고
+            실제 태그는 자바스크립트로 나중에 붙이는데, 애드센스는 그걸 못 읽는다.
+            React 가 async 스크립트를 알아서 head 로 올려 준다. */}
+        <script
+          async
+          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`}
+          crossOrigin="anonymous"
+        />
+
         <Header />
 
         <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-8 sm:px-5">
